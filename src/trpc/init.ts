@@ -2,17 +2,16 @@ import { auth } from '@clerk/nextjs/server';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { cache } from 'react';
-import  superjson from 'superjson';
+import superjson from 'superjson';
 import { db } from '~/db';
 import { users } from '~/db/schema';
 import { rateLimit } from '~/lib/redis';
 export const createTRPCContext = cache(async () => {
-  const {userId} = await auth()
+  const {userId} = await auth();
 
-  return {
-    clerkUserId: userId,
-  }
+  return { clerkUserId: userId };
 });
+
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 // Avoid exporting the entire t-object
@@ -50,7 +49,7 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
   return opts.next({
     ctx:{
       ...ctx,
-      user
+     user
     }
   }); 
 });

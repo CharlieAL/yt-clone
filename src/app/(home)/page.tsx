@@ -1,17 +1,20 @@
 import { HydrateClient, trpc } from '~/trpc/server'
-import { PageClient } from './client'
-import { Suspense } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import HomeView from '~/modules/home/views/home'
 
-export default async function HomePage() {
-  void trpc.hello.prefetch({ text: ', YT clone 😈 from the server' })
+interface HomePageProps {
+  searchParams: Promise<{
+    categoryId?: string
+  }>
+}
+
+const HomePage = async ({ searchParams }: HomePageProps) => {
+  const { categoryId } = await searchParams
+  void trpc.categories.getMany.prefetch()
   return (
     <HydrateClient>
-      <Suspense fallback='Loading...'>
-        <ErrorBoundary fallback={<div>Something went wrong</div>}>
-          <PageClient />
-        </ErrorBoundary>
-      </Suspense>
+      <HomeView categoryId={categoryId} />
     </HydrateClient>
   )
 }
+
+export default HomePage
