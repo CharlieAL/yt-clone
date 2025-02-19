@@ -9,3 +9,10 @@ export const users = pgTable("user", {
   createdAt:  timestamp('created_at').defaultNow(),
   updatedAt:  timestamp('updated_at').defaultNow(),
 },(t)=>[uniqueIndex('clerk_id_idx').on(t.clerkId)]);
+
+export const categories = pgTable("categories", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull().unique(),
+  createdAt:  timestamp('created_at').defaultNow(),
+  updatedAt:  timestamp('updated_at').defaultNow(),
+},(t)=>[uniqueIndex('name_idx').on(t.name)]);
