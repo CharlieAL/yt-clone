@@ -4,7 +4,10 @@ import { Separator } from '~/components/ui/separator'
 
 export const HomeSidebar = () => {
   return (
-    <Sidebar className='pt-16 z-40 border-none' collapsible='icon'>
+    <Sidebar
+      className='pt-16 z-40 border-none max-w-[200px] bg-red-300'
+      collapsible='icon'
+    >
       <SidebarContent className='bg-background'>
         <MainSection />
         <Separator />

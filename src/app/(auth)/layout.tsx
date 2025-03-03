@@ -1,13 +1,11 @@
+import AuthLayout from '~/modules/auth/ui/layouts/auth-layout'
+
 interface AuthLayoutProps {
   children: React.ReactNode
 }
 
-const AuthLayout = ({ children }: AuthLayoutProps) => {
-  return (
-    <main className='flex w-full min-h-screen justify-center items-center'>
-      {children}
-    </main>
-  )
+const Layout = ({ children }: AuthLayoutProps) => {
+  return <AuthLayout>{children}</AuthLayout>
 }
 
-export default AuthLayout
+export default Layout

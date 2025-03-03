@@ -4,6 +4,7 @@ import './globals.css'
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { TRPCProvider } from '~/trpc/client'
+import { Toaster } from '~/components/ui/sonner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,7 +32,10 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <TRPCProvider>{children}</TRPCProvider>
+          <TRPCProvider>
+            <Toaster />
+            {children}
+          </TRPCProvider>
         </body>
       </html>
     </ClerkProvider>
