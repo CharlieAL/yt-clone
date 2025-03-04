@@ -53,9 +53,8 @@ export const videos = pgTable('videos', {
   categoryId: uuid('category_id').references(() => categories.id, {
     onDelete: 'set null'
   }),
-  url: text(),
   createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow()
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
 })
 
 export const videosReletions = relations(videos, ({ one }) => ({

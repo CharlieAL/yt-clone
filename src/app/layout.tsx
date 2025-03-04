@@ -33,7 +33,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <TRPCProvider>
-            <Toaster />
+            <Toaster theme='light' />
             {children}
           </TRPCProvider>
         </body>
