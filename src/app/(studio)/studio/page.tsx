@@ -1,8 +1,8 @@
 import { DEFAULT_LIMIT } from '~/constants'
-import { StudioView } from '~/modules/studio/views/studio-view'
+import { StudioView } from '~/modules/studio/ui/views/studio-view'
 import { HydrateClient, trpc } from '~/trpc/server'
 
-const PageName = async () => {
+const StudioPage = async () => {
   void trpc.studio.getMany.prefetchInfinite({
     limit: DEFAULT_LIMIT
   })
@@ -13,4 +13,4 @@ const PageName = async () => {
   )
 }
 
-export default PageName
+export default StudioPage
