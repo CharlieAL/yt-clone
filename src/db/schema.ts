@@ -1,5 +1,9 @@
 import { relations } from 'drizzle-orm'
-
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema
+} from 'drizzle-zod'
 import {
   integer,
   pgEnum,
@@ -81,3 +85,7 @@ export const videosReletions = relations(videos, ({ one }) => ({
     references: [categories.id]
   })
 }))
+
+export const videosSelectSchema = createSelectSchema(videos)
+export const videosCreateSchema = createInsertSchema(videos)
+export const videosUpdateSchema = createUpdateSchema(videos)
