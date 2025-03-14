@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { THUMBNAIL_FALLBACK } from '~/constants'
 import { cn, formatDuration } from '~/lib/utils'
 
 interface VideoThumbnailProps {
@@ -19,7 +20,7 @@ export const VideoThumbnail = ({
       {/* thumbnail wrapper */}
       <div className='relative w-full overflow-hidden rounded-xl aspect-video '>
         <Image
-          src={imageUrl ?? '/placeholder.svg'}
+          src={imageUrl || THUMBNAIL_FALLBACK}
           alt={title}
           fill
           className={cn(
