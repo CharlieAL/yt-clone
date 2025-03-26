@@ -47,7 +47,7 @@ import {
   SparkleIcon,
   Trash2Icon
 } from 'lucide-react'
-import { videosUpdateSchema } from '~/db/schema'
+import { videoUpdateSchema } from '~/db/schema'
 import { toast } from 'sonner'
 import { VideoPlayer } from '~/modules/videos/ui/components/video-player'
 import Link from 'next/link'
@@ -112,12 +112,12 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
     }
   })
 
-  const form = useForm<z.infer<typeof videosUpdateSchema>>({
-    resolver: zodResolver(videosUpdateSchema),
+  const form = useForm<z.infer<typeof videoUpdateSchema>>({
+    resolver: zodResolver(videoUpdateSchema),
     defaultValues: video
   })
 
-  const onSubmit = (values: z.infer<typeof videosUpdateSchema>) => {
+  const onSubmit = (values: z.infer<typeof videoUpdateSchema>) => {
     update.mutate(values)
   }
 
