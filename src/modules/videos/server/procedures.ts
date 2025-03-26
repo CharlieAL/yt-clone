@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server'
-import { and, eq, getTableColumns, inArray } from 'drizzle-orm'
+import { and, eq, getTableColumns, inArray, isNotNull } from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
 import { db } from '~/db'
 import {
+  subscriptions,
   users,
   videos,
   videosReactions,
@@ -44,11 +45,27 @@ export const videosRouter = createTRPCRouter({
           .where(inArray(videosReactions.userId, userId ? [userId] : []))
       )
 
+      const viewerSubscriptions = db.$with('viewer_subscriptions').as(
+        db
+          .select()
+          .from(subscriptions)
+          .where(inArray(subscriptions.viewerId, userId ? [userId] : []))
+      )
+
       const [existingVideo] = await db
-        .with(viewerReactions)
+        .with(viewerReactions, viewerSubscriptions)
         .select({
           ...getTableColumns(videos),
-          user: getTableColumns(users),
+          user: {
+            ...getTableColumns(users),
+            subscribedCount: db.$count(
+              subscriptions,
+              eq(subscriptions.creatorId, users.id)
+            ),
+            viewerSubscribed: isNotNull(viewerSubscriptions.viewerId).mapWith(
+              Boolean
+            )
+          },
           views: db
             .$count(videosViews, eq(videosViews.videoId, videos.id))
             .as('videoViews'),
@@ -71,6 +88,10 @@ export const videosRouter = createTRPCRouter({
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))
         .leftJoin(viewerReactions, eq(viewerReactions.videoId, videos.id))
+        .leftJoin(
+          viewerSubscriptions,
+          eq(viewerSubscriptions.creatorId, users.id)
+        )
         .where(eq(videos.id, input.id))
         .limit(1)
       // .groupBy(videos.id, users.id, viewerReactions.type)
