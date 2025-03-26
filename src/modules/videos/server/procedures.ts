@@ -8,7 +8,7 @@ import {
   users,
   videos,
   videosReactions,
-  videosUpdateSchema,
+  videoUpdateSchema,
   videosViews
 } from '~/db/schema'
 import { mux } from '~/lib/mux'
@@ -167,7 +167,7 @@ export const videosRouter = createTRPCRouter({
       return removedVideo
     }),
   upload: protectedProcedure
-    .input(videosUpdateSchema)
+    .input(videoUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       const { id: userId } = ctx.user
 
