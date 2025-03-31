@@ -14,6 +14,7 @@ import {
   uuid,
   primaryKey
 } from 'drizzle-orm/pg-core'
+import { z } from 'zod'
 
 export const users = pgTable(
   'user',
@@ -37,7 +38,8 @@ export const userRelations = relations(users, ({ many }) => ({
   }),
   suscribers: many(subscriptions, {
     relationName: 'subscriptions_creator_id_fkey'
-  })
+  }),
+  comments: many(comments)
 }))
 
 export const subscriptions = pgTable(
@@ -128,12 +130,43 @@ export const videosReletions = relations(videos, ({ one, many }) => ({
     references: [categories.id]
   }),
   views: many(videosViews),
-  reactions: many(videosReactions)
+  reactions: many(videosReactions),
+  comments: many(comments)
 }))
 
-export const videosSelectSchema = createSelectSchema(videos)
-export const videosCreateSchema = createInsertSchema(videos)
-export const videosUpdateSchema = createUpdateSchema(videos)
+export const videoSelectSchema = createSelectSchema(videos)
+export const videoCreateSchema = createInsertSchema(videos)
+export const videoUpdateSchema = createUpdateSchema(videos)
+
+export const comments = pgTable('comments', {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  videoId: uuid('video_id')
+    .references(() => videos.id, { onDelete: 'cascade' })
+    .notNull(),
+  content: text().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+})
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id]
+  }),
+  video: one(videos, {
+    fields: [comments.videoId],
+    references: [videos.id]
+  })
+}))
+
+export const commentSelectSchema = createSelectSchema(comments)
+export const commentInsertSchema = createInsertSchema(comments, {
+  content: z.string().min(1, { message: 'Porfavor ingrese algo' }).max(280)
+})
+export const commentUpdateSchema = createUpdateSchema(comments)
 
 export const videosViews = pgTable(
   'video_views',
