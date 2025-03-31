@@ -30,3 +30,9 @@ export const VideoPlayer = ({
     />
   )
 }
+
+export const VideoPlayerSkeleton = () => {
+  return (
+    <div className='relative w-full aspect-video bg-black animate-pulse rounded-xl' />
+  )
+}

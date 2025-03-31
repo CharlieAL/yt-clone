@@ -5,6 +5,7 @@ import { VideoMenu } from './video-menu'
 import { VideoOwner } from './video-owner'
 import { VideoReaction } from './video-reaction'
 import { format, formatDistanceToNow } from 'date-fns'
+import { Skeleton } from '~/components/ui/skeleton'
 
 interface VideoTopRowProps {
   video: VideoGetOneOutputs
@@ -53,6 +54,32 @@ export const VideoTopRow = ({ video }: VideoTopRowProps) => {
         expandedDate={expandedDate}
         description={video.description}
       />
+    </div>
+  )
+}
+
+export const VideoTopRowSkeleton = () => {
+  return (
+    <div className='flex flex-col gap-4 mt-4'>
+      <Skeleton className='h-7 w-3/4' />
+      <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'>
+        <div className='flex items-center gap-3'>
+          <Skeleton className='h-10 w-10 rounded-full' />
+          <div className='flex flex-col gap-1'>
+            <Skeleton className='h-4 w-32' />
+            <Skeleton className='h-4 w-24' />
+          </div>
+        </div>
+        <div className='flex overflow-x-auto sm:min-w-[calc(50%-6px)] sm:justify-end sm:overflow-visible pb-2 -mb-2 sm:pb-0 sm:mb-0 gap-2'>
+          <Skeleton className='h-10 w-28' />
+          <Skeleton className='h-10 w-28' />
+          <Skeleton className='h-10 w-10' />
+        </div>
+      </div>
+      <div className='flex flex-col gap-2'>
+        <Skeleton className='h-4 w-48' />
+        <Skeleton className='h-20 w-full' />
+      </div>
     </div>
   )
 }
