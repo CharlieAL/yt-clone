@@ -12,6 +12,8 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Button } from '~/components/ui/button'
 import {
+  ChevronDownIcon,
+  ChevronUpIcon,
   MessageSquareReplyIcon,
   MoreVerticalIcon,
   ThumbsDownIcon,
@@ -22,15 +24,26 @@ import { useAuth, useClerk } from '@clerk/nextjs'
 
 import { toast } from 'sonner'
 import { cn } from '~/lib/utils'
+import { useState } from 'react'
+import { CommentForm } from './comment-form'
+import { CommentReplies } from './comment-replies'
 
 interface CommentItemProps {
   comment: CommnetGetManyOutputs['data'][number]
+  variant?: 'reply' | 'comment'
 }
 
-export const CommentItem = ({ comment }: CommentItemProps) => {
+export const CommentItem = ({
+  comment,
+  variant = 'comment'
+}: CommentItemProps) => {
   const { userId } = useAuth()
   const { openSignIn } = useClerk()
   const utils = trpc.useUtils()
+
+  const [isReplyOpen, setIsReplyOpen] = useState(false)
+  const [isRepliesOpen, setIsRepliesOpen] = useState(false)
+
   const remove = trpc.comments.remove.useMutation({
     onSuccess: () => {
       toast.success('Comment removed')
@@ -75,24 +88,25 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
       <div className='flex gap-4'>
         <Link href={`/users/${comment.userId}`}>
           <UserAvatar
-            size={'lg'}
+            size={variant === 'comment' ? 'lg' : 'sm'}
             imageUrl={comment.user.imageUrl}
             name={comment.user.name}
           />
         </Link>
         <div className='flex-1 min-w-0'>
-          <Link href={`/users/${comment.userId}`}>
-            <div className='flex items-center gap-2 mb-0.5'>
-              <span className='font-medium text-sm pb-0.5'>
-                {comment.user.name}
-              </span>
-              <span className='text-sm text-muted-foreground'>
-                {formatDistanceToNow(comment.createdAt, {
-                  addSuffix: true
-                })}
-              </span>
-            </div>
-          </Link>
+          <div className='flex items-center gap-2 mb-0.5'>
+            <Link
+              href={`/users/${comment.userId}`}
+              className='font-medium text-sm pb-0.5'
+            >
+              <span className=''>{comment.user.name}</span>
+            </Link>
+            <span className='text-sm text-muted-foreground'>
+              {formatDistanceToNow(comment.createdAt, {
+                addSuffix: true
+              })}
+            </span>
+          </div>
           <p className='text-sm'>{comment.content}</p>
           {/* TODO: Reactions */}
           <div className='flex items-center gap-2 mt-1'>
@@ -130,32 +144,77 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                 {comment.dislikes}
               </span>
             </div>
+            {variant === 'comment' && (
+              <Button
+                variant={'ghost'}
+                size={'sm'}
+                className='h-8'
+                onClick={() => setIsReplyOpen(true)}
+              >
+                Reply
+              </Button>
+            )}
           </div>
         </div>
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button variant={'ghost'} size={'icon'} className='size-8'>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className='w-48' align='end'>
-            <DropdownMenuItem>
-              <MessageSquareReplyIcon className='size-4' />
-              <span>Reply</span>
-            </DropdownMenuItem>
-            {userId === comment.user.clerkId && (
-              <DropdownMenuItem
-                onClick={() => {
-                  remove.mutate({ id: comment.id })
-                }}
-              >
-                <Trash2Icon className='size-4' />
-                Remove
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {comment.user.clerkId === userId && variant === 'comment' && (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant={'ghost'} size={'icon'} className='size-8'>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-48' align='end'>
+              {variant === 'comment' && (
+                <DropdownMenuItem onClick={() => setIsReplyOpen(true)}>
+                  <MessageSquareReplyIcon className='size-4' />
+                  <span>Reply</span>
+                </DropdownMenuItem>
+              )}
+
+              {userId === comment.user.clerkId && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    remove.mutate({ id: comment.id })
+                  }}
+                >
+                  <Trash2Icon className='size-4' />
+                  Remove
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
+      {isReplyOpen && variant === 'comment' && (
+        <div className='mt-4 pl-14'>
+          <CommentForm
+            videoId={comment.videoId}
+            variant='reply'
+            parentId={comment.id}
+            onCancel={() => setIsReplyOpen(false)}
+            onSuccess={() => {
+              setIsReplyOpen(false)
+              setIsRepliesOpen(true)
+            }}
+          />
+        </div>
+      )}
+      {comment.replyCount > 0 && variant === 'comment' && (
+        <div className=' pl-14'>
+          <Button
+            variant={'tertiary'}
+            size={'sm'}
+            className='h-8'
+            onClick={() => setIsRepliesOpen((prev) => !prev)}
+          >
+            {isRepliesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            View {comment.replyCount} replies
+          </Button>
+        </div>
+      )}
+      {comment.replyCount > 0 && variant === 'comment' && isRepliesOpen && (
+        <CommentReplies videoId={comment.videoId} parentId={comment.id} />
+      )}
     </div>
   )
 }

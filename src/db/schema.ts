@@ -12,7 +12,8 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-  primaryKey
+  primaryKey,
+  foreignKey
 } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 
@@ -139,18 +140,29 @@ export const videoSelectSchema = createSelectSchema(videos)
 export const videoCreateSchema = createInsertSchema(videos)
 export const videoUpdateSchema = createUpdateSchema(videos)
 
-export const comments = pgTable('comments', {
-  id: uuid().primaryKey().defaultRandom(),
-  userId: uuid('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
-  videoId: uuid('video_id')
-    .references(() => videos.id, { onDelete: 'cascade' })
-    .notNull(),
-  content: text().notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
-})
+export const comments = pgTable(
+  'comments',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    parentId: uuid('parent_id'),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    videoId: uuid('video_id')
+      .references(() => videos.id, { onDelete: 'cascade' })
+      .notNull(),
+    content: text().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull()
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.parentId],
+      foreignColumns: [t.id],
+      name: 'comment_parent_id_fkey'
+    }).onDelete('cascade')
+  ]
+)
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
   user: one(users, {
@@ -160,6 +172,14 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
   video: one(videos, {
     fields: [comments.videoId],
     references: [videos.id]
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: 'comment_parent_id_fkey'
+  }),
+  replies: many(comments, {
+    relationName: 'comment_parent_id_fkey'
   }),
   reactions: many(commentReactions)
 }))
