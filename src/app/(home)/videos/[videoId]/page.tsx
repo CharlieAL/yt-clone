@@ -1,4 +1,4 @@
-import { DEFAULT_LIMIT_COMMENTS } from '~/constants'
+import { DEFAULT_LIMIT_COMMENTS, DEFAULT_LIMIT_SUGGESTIONS } from '~/constants'
 import { VideoView } from '~/modules/videos/ui/views/video-view'
 import { HydrateClient, trpc } from '~/trpc/server'
 
@@ -9,10 +9,13 @@ interface VideoPageProps {
 const VideoPage = async ({ params }: VideoPageProps) => {
   const { videoId } = await params
   void trpc.videos.getOne.prefetch({ id: videoId })
-  // TODO: dont forget change to 'prefetchInfiniteQuery'
   void trpc.comments.getMany.prefetchInfinite({
     videoId,
     limit: DEFAULT_LIMIT_COMMENTS
+  })
+  void trpc.suggestions.getMany.prefetchInfinite({
+    videoId,
+    limit: DEFAULT_LIMIT_SUGGESTIONS
   })
   return (
     <HydrateClient>
