@@ -104,8 +104,19 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
   const remove = trpc.videos.remove.useMutation({
     onSuccess: ({ title }) => {
       utils.studio.getMany.invalidate()
-      router.replace('/studio')
       toast.success(`Video "${title}" removed`)
+      router.replace('/studio')
+    },
+    onError: () => {
+      toast.error('Something went wrong')
+    }
+  })
+
+  const revalidate = trpc.videos.revalidate.useMutation({
+    onSuccess: ({ title }) => {
+      utils.studio.getMany.invalidate()
+      utils.studio.getOne.invalidate({ id: videoId })
+      toast.success(`Video "${title}" revalidated`)
     },
     onError: () => {
       toast.error('Something went wrong')
@@ -173,6 +184,14 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                   >
                     <Trash2Icon className='size-4' />
                     Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      revalidate.mutate({ id: video.id })
+                    }}
+                  >
+                    <RotateCcwIcon className='size-4' />
+                    Revalidate
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
