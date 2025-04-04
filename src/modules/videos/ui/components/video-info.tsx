@@ -29,8 +29,8 @@ export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
     return new Intl.NumberFormat('en', {
       notation: 'compact',
       maximumFractionDigits: 1
-    }).format(data.viewsCount)
-  }, [data.viewsCount])
+    }).format(data.views)
+  }, [data.views])
 
   const compactDate = useMemo(() => {
     return formatDistanceToNowStrict(new Date(data.createdAt))

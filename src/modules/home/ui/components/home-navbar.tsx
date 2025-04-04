@@ -1,6 +1,5 @@
-import { Search } from 'lucide-react'
 import Link from 'next/link'
-import { Button } from '~/components/ui/button'
+import { SearchInput } from '~/components/search-input'
 
 import { SidebarTrigger } from '~/components/ui/sidebar'
 import { AuthButton } from '~/modules/auth/ui/components/auth-button'
@@ -41,31 +40,6 @@ const LogoSvg = () => (
     </svg>
   </>
 )
-
-const SearchInput = () => {
-  return (
-    <form className='w-full relative flex space-x-0 group'>
-      {/* <Search
-        size={20}
-        className='absolute left-3 top-[8px] text-primary/25 hidden group-focus-within:block'
-      /> */}
-      <input
-        placeholder='Search'
-        className='w-full pl-5 rounded-l-full border focus:border-blue-400 outline-none text-base text-muted-foreground  z-10 '
-        name='search'
-        autoComplete='off'
-      />
-      <Button
-        variant={'outline'}
-        size='icon'
-        type='submit'
-        className='rounded-l-none rounded-r-full w-16 border-l-0'
-      >
-        <Search className='text-primary/25 size-5 ' />
-      </Button>
-    </form>
-  )
-}
 
 export const HomeNavbar = () => {
   return (
