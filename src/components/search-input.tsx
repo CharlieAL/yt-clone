@@ -3,17 +3,23 @@
 import { Search, XIcon } from 'lucide-react'
 import { Button } from './ui/button'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { APP_URL } from '~/constants'
 
 export const SearchInput = () => {
-  const [value, setValue] = useState('')
+  const searchParams = useSearchParams()
+  const categoryId = searchParams.get('categoryId') || ''
+  const query = searchParams.get('query') || ''
+  const [value, setValue] = useState(query)
   const router = useRouter()
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const url = new URL('/search', APP_URL)
     const newQuery = value.trim()
+    if (categoryId) {
+      url.searchParams.set('categoryId', categoryId)
+    }
     url.searchParams.set('query', encodeURIComponent(newQuery))
     if (newQuery === '') {
       url.searchParams.delete('query')

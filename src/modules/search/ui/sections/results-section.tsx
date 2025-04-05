@@ -23,11 +23,31 @@ interface ResultsSectionProps {
 
 export const ResultsSection = ({ query, categoryId }: ResultsSectionProps) => {
   return (
-    <Suspense fallback={<p>loading ..</p>}>
+    <Suspense
+      key={`${query}-${categoryId}`}
+      fallback={<ResultsSectionSkeleton />}
+    >
       <ErrorBoundary fallback={<p>Error ..</p>}>
         <ResultsSectionSuspense query={query} categoryId={categoryId} />
       </ErrorBoundary>
     </Suspense>
+  )
+}
+
+const ResultsSectionSkeleton = () => {
+  return (
+    <>
+      <div className='md:flex flex-col gap-4 hidden'>
+        {Array.from({ length: DEFAULT_LIMIT }).map((_, i) => (
+          <VideoRowCardSkeleton key={i} />
+        ))}
+      </div>
+      <div className='flex flex-col gap-4 p-4 gap-y-10 pt-6 md:hidden'>
+        {Array.from({ length: DEFAULT_LIMIT }).map((_, i) => (
+          <VideoGridCardSkeleton key={i} />
+        ))}
+      </div>
+    </>
   )
 }
 
