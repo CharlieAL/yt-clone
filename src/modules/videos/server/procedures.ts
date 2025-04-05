@@ -1,5 +1,14 @@
 import { TRPCError } from '@trpc/server'
-import { and, eq, getTableColumns, inArray, isNotNull } from 'drizzle-orm'
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  inArray,
+  isNotNull,
+  lt,
+  or
+} from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
 import { z } from 'zod'
 import { db } from '~/db'
@@ -19,6 +28,78 @@ import {
 } from '~/trpc/init'
 
 export const videosRouter = createTRPCRouter({
+  getMany: baseProcedure
+    .input(
+      z.object({
+        categoryId: z.string().uuid().nullish(),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date()
+          })
+          .nullish(),
+        limit: z.number().min(1).max(100)
+      })
+    )
+    .query(async ({ input }) => {
+      const { cursor, limit, categoryId } = input
+
+      const data = await db
+        .select({
+          ...getTableColumns(videos),
+          author: users,
+          views: db
+            .$count(videosViews, eq(videosViews.videoId, videos.id))
+            .as('videoViews'),
+          likes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'like')
+            )
+          ),
+          dislikes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'dislike')
+            )
+          )
+        })
+        .from(videos)
+        .where(
+          and(
+            eq(videos.visibility, 'public'),
+            categoryId ? eq(videos.categoryId, categoryId) : undefined,
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .innerJoin(users, eq(videos.userId, users.id))
+        .orderBy(desc(videos.updatedAt), desc(videos.id))
+        .limit(limit + 1) // add 1 becaue we need to know if there is more data
+
+      const hasMore = data.length > limit
+      // remove the last item if there is more data
+      const items = hasMore ? data.slice(0, -1) : data
+      // set the next cursor to the last item if there is more data
+      const lastItem = items[items.length - 1]
+      const nextCursor = hasMore
+        ? {
+            id: lastItem.id,
+            updatedAt: lastItem.updatedAt
+          }
+        : null
+
+      return { data: items, nextCursor }
+    }),
   getOne: baseProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
