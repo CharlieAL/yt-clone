@@ -28,6 +28,78 @@ import {
 } from '~/trpc/init'
 
 export const videosRouter = createTRPCRouter({
+  getTrending: baseProcedure
+    .input(
+      z.object({
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            viewCount: z.number()
+          })
+          .nullish(),
+        limit: z.number().min(1).max(100)
+      })
+    )
+    .query(async ({ input }) => {
+      const { cursor, limit } = input
+
+      const viewCountSubQuery = db
+        .$count(videosViews, eq(videosViews.videoId, videos.id))
+        .as('videoViews')
+
+      const data = await db
+        .select({
+          ...getTableColumns(videos),
+          author: users,
+          views: viewCountSubQuery,
+          likes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'like')
+            )
+          ),
+          dislikes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'dislike')
+            )
+          )
+        })
+        .from(videos)
+        .where(
+          and(
+            eq(videos.visibility, 'public'),
+            cursor
+              ? or(
+                  lt(viewCountSubQuery, cursor.viewCount),
+                  and(
+                    eq(viewCountSubQuery, cursor.viewCount),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .innerJoin(users, eq(videos.userId, users.id))
+        .orderBy(desc(viewCountSubQuery), desc(videos.id))
+        .limit(limit + 1) // add 1 becaue we need to know if there is more data
+
+      const hasMore = data.length > limit
+      // remove the last item if there is more data
+      const items = hasMore ? data.slice(0, -1) : data
+      // set the next cursor to the last item if there is more data
+      const lastItem = items[items.length - 1]
+      const nextCursor = hasMore
+        ? {
+            id: lastItem.id,
+            viewCount: lastItem.views
+          }
+        : null
+
+      return { data: items, nextCursor }
+    }),
   getMany: baseProcedure
     .input(
       z.object({
