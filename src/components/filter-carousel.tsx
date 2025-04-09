@@ -24,7 +24,7 @@ interface FilterCarouselProps {
   }[]
 }
 
-const FilterCarousel = ({
+export const FilterCarousel = ({
   value,
   isLoading,
   onSelect,
@@ -110,5 +110,3 @@ const FilterCarousel = ({
     </div>
   )
 }
-
-export default FilterCarousel

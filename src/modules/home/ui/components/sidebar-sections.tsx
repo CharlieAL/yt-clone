@@ -10,6 +10,7 @@ import {
   ThumbsUpIcon
 } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import {
   SidebarGroup,
@@ -22,6 +23,7 @@ import {
 
 export const MainSection = () => {
   const { isSignedIn } = useAuth()
+  const pathname = usePathname()
   const clerk = useClerk()
   const items = [
     {
@@ -50,6 +52,7 @@ export const MainSection = () => {
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
+                isActive={pathname === item.href}
                 onClick={(e) => {
                   if (item.auth && !isSignedIn) {
                     e.preventDefault()
@@ -72,6 +75,7 @@ export const MainSection = () => {
 
 export const PersonalSection = () => {
   const { isSignedIn } = useAuth()
+  const pathname = usePathname()
   const clerk = useClerk()
   const items = [
     {
@@ -102,6 +106,7 @@ export const PersonalSection = () => {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
+                isActive={pathname === item.href}
                 tooltip={item.title}
                 onClick={(e) => {
                   if (item.auth && !isSignedIn) {

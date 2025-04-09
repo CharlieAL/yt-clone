@@ -1,4 +1,4 @@
-import AuthLayout from '~/modules/auth/ui/layouts/auth-layout'
+import { AuthLayout } from '~/modules/auth/ui/layouts/auth-layout'
 
 interface AuthLayoutProps {
   children: React.ReactNode

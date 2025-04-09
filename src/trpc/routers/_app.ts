@@ -2,20 +2,22 @@ import { createTRPCRouter } from '../init'
 
 import { studioRouter } from '~/modules/studio/server/procedures'
 import { videosRouter } from '~/modules/videos/server/procedures'
+import { searchRouter } from '~/modules/search/server/procedure'
+import { commentsRouter } from '~/modules/comments/server/procedures'
+import { playlistRouter } from '~/modules/playlists/server/procedures'
 import { videoViewRouter } from '~/modules/video-views/server/procedures'
 import { categoriesRouter } from '~/modules/categories/server/procedures'
-import { videoReactionsRouter } from '~/modules/video-reactions/server/procedures'
-import { subscriptionsRouter } from '~/modules/subscriptions/server/procedures'
-import { commentsRouter } from '~/modules/comments/server/procedures'
-import { commentReactionsRouter } from '~/modules/comment-reactions/server/procedures'
 import { suggestionsRouter } from '~/modules/suggestion/server/procedures'
-import { searchRouter } from '~/modules/search/server/procedure'
+import { subscriptionsRouter } from '~/modules/subscriptions/server/procedures'
+import { videoReactionsRouter } from '~/modules/video-reactions/server/procedures'
+import { commentReactionsRouter } from '~/modules/comment-reactions/server/procedures'
 
 export const appRouter = createTRPCRouter({
   studio: studioRouter,
   videos: videosRouter,
   search: searchRouter,
   comments: commentsRouter,
+  playlist: playlistRouter,
   categories: categoriesRouter,
   videoViews: videoViewRouter,
   suggestions: suggestionsRouter,

@@ -3,17 +3,17 @@ export const dynamic = 'force-dynamic'
 import { HydrateClient, trpc } from '~/trpc/server'
 
 import { DEFAULT_LIMIT } from '~/constants'
-import { TrendingView } from '~/modules/home/ui/views/trending-view'
+import { LikedView } from '~/modules/playlists/ui/views/liked_views'
 
-const TrendingPage = async () => {
-  void trpc.videos.getTrending.prefetchInfinite({
+const LikedPage = async () => {
+  void trpc.playlist.getLiked.prefetchInfinite({
     limit: DEFAULT_LIMIT
   })
   return (
     <HydrateClient>
-      <TrendingView />
+      <LikedView />
     </HydrateClient>
   )
 }
 
-export default TrendingPage
+export default LikedPage
