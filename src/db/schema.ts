@@ -355,3 +355,7 @@ export const playlistVideosRelations = relations(playlistVideos, ({ one }) => ({
     references: [videos.id]
   })
 }))
+
+export const playlistVideoSelectSchema = createSelectSchema(playlistVideos)
+export const playlistVideoCreateSchema = createInsertSchema(playlistVideos)
+export const playlistVideoUpdateSchema = createUpdateSchema(playlistVideos)
