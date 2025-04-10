@@ -92,7 +92,7 @@ export const PersonalSection = () => {
     },
     {
       title: 'All Playlists',
-      href: '/playlists/all',
+      href: '/playlists',
       icon: ListVideoIcon,
       auth: true
     }

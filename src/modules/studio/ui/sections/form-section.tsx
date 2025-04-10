@@ -195,7 +195,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
               </DropdownMenu>
             </div>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-5 gap-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 mb-24'>
             <div className='space-y-8 lg:col-span-3'>
               <FormField
                 control={form.control}
