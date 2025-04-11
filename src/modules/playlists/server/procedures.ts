@@ -12,9 +12,139 @@ import {
   videosViews
 } from '~/db/schema'
 
-import { createTRPCRouter, protectedProcedure } from '~/trpc/init'
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure
+} from '~/trpc/init'
 
 export const playlistRouter = createTRPCRouter({
+  remove: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().uuid()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { playlistId } = input
+      const { id: userId } = ctx.user
+
+      const [deletedPlaylist] = await db
+        .delete(playlists)
+        .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)))
+        .returning()
+      if (!deletedPlaylist) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'No se pudo eliminar la playlist'
+        })
+      }
+      return deletedPlaylist
+    }),
+  getOne: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().uuid()
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const { playlistId } = input
+      const { id: userId } = ctx.user
+      const [playlist] = await db
+        .select()
+        .from(playlists)
+        .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)))
+      if (!playlist) {
+        throw new TRPCError({ code: 'NOT_FOUND' })
+      }
+      return playlist
+    }),
+  getVideos: baseProcedure
+    .input(
+      z.object({
+        playlistId: z.string().uuid(),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date()
+          })
+          .nullish(),
+        limit: z.number().min(1).max(100)
+      })
+    )
+    .query(async ({ input }) => {
+      const { cursor, limit, playlistId } = input
+
+      const videosFromPlaylist = db
+        .$with('videos_from_playlist')
+        .as(
+          db
+            .select()
+            .from(playlistVideos)
+            .where(eq(playlistVideos.playlistId, playlistId))
+        )
+
+      const data = await db
+        .with(videosFromPlaylist)
+        .select({
+          ...getTableColumns(videos),
+          author: users,
+          views: db
+            .$count(videosViews, eq(videosViews.videoId, videos.id))
+            .as('videoViews'),
+          likes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'like')
+            )
+          ),
+          dislikes: db.$count(
+            videosReactions,
+            and(
+              eq(videosReactions.videoId, videos.id),
+              eq(videosReactions.type, 'dislike')
+            )
+          )
+        })
+        .from(videos)
+        .innerJoin(users, eq(videos.userId, users.id))
+        .innerJoin(
+          videosFromPlaylist,
+          eq(videos.id, videosFromPlaylist.videoId)
+        )
+        .where(
+          and(
+            eq(videos.visibility, 'public'),
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+
+        .orderBy(desc(videos.updatedAt), desc(videos.id))
+        .limit(limit + 1) // add 1 becaue we need to know if there is more data
+
+      const hasMore = data.length > limit
+      // remove the last item if there is more data
+      const items = hasMore ? data.slice(0, -1) : data
+      // set the next cursor to the last item if there is more data
+      const lastItem = items[items.length - 1]
+      const nextCursor = hasMore
+        ? {
+            id: lastItem.id,
+            updatedAt: lastItem.updatedAt
+          }
+        : null
+
+      return { data: items, nextCursor }
+    }),
   removeVideo: protectedProcedure
     .input(
       z.object({
