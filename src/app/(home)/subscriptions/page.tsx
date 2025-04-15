@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { DEFAULT_LIMIT_SUBSCRIPTIONS } from '~/constants'
 import { SubscriptionsView } from '~/modules/subscriptions/ui/views/subscriptions-views'
 
