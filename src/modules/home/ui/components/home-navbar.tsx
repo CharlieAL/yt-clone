@@ -4,7 +4,7 @@ import { SearchInput } from '~/components/search-input'
 import { SidebarTrigger } from '~/components/ui/sidebar'
 import { AuthButton } from '~/modules/auth/ui/components/auth-button'
 
-const LogoSvg = () => (
+export const LogoSvg = () => (
   <>
     <svg
       xmlns='http://www.w3.org/2000/svg'
