@@ -15,11 +15,14 @@ export const useSubscriptions = ({
   const clerk = useClerk()
   const utils = trpc.useUtils()
 
+  console.log(creatorId)
+
   const subscribe = trpc.subscriptions.create.useMutation({
     onSuccess: () => {
       toast.success('Subscribed')
 
       utils.videos.getManySubscribed.invalidate()
+      utils.users.getOne.invalidate({ id: creatorId })
 
       if (fromVideoId) {
         utils.videos.getOne.invalidate({
@@ -37,6 +40,7 @@ export const useSubscriptions = ({
     onSuccess: () => {
       toast.success('Unsubscribed')
       utils.videos.getManySubscribed.invalidate()
+      utils.users.getOne.invalidate({ id: creatorId })
       if (fromVideoId) {
         utils.videos.getOne.invalidate({
           id: fromVideoId

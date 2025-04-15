@@ -24,7 +24,7 @@ export const SubscriptionsButton = ({
       onClick={onClick}
       disabled={disabled}
     >
-      {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+      <span className='px-3'>{isSubscribed ? 'Unsubscribe' : 'Subscribe'}</span>
     </Button>
   )
 }

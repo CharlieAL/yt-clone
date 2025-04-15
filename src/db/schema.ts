@@ -23,6 +23,8 @@ export const users = pgTable(
     id: uuid().primaryKey().defaultRandom(),
     clerkId: text().unique().notNull(),
     name: text().notNull(),
+    bannerUrl: text('banner_url'),
+    bannerKey: text('banner_key'),
     imageUrl: text().notNull(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
