@@ -38,7 +38,7 @@ const StudioSidebarHeader = () => {
 
   return (
     <SidebarHeader className='flex items-center justify-center pb-4'>
-      <Link href={'users/current'}>
+      <Link prefetch href={'users/current'}>
         <UserAvatar
           imageUrl={user?.imageUrl}
           name={user?.fullName ?? 'User Default'}
@@ -66,10 +66,7 @@ const StudioSidebarHeader = () => {
 export const StudioSidebar = () => {
   const pathname = usePathname()
   return (
-    <Sidebar
-      className='pt-16 z-40  max-w-[200px] bg-red-300'
-      collapsible='icon'
-    >
+    <Sidebar className='pt-16 z-40  max-w-[200px] bg-red-300' collapsible='icon'>
       <SidebarContent className='bg-background'>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -83,7 +80,7 @@ export const StudioSidebar = () => {
                   tooltip={'Content'}
                   asChild
                 >
-                  <Link href={'/studio'}>
+                  <Link prefetch href={'/studio'}>
                     <VideoIcon className='size-5' />
                     <span className='text-sm'>Content</span>
                   </Link>
@@ -92,7 +89,7 @@ export const StudioSidebar = () => {
               <Separator />
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip={'Exit studio'} asChild>
-                  <Link href={'/'}>
+                  <Link prefetch href={'/'}>
                     <LogOutIcon className='size-5' />
                     <span className='text-sm'>Exit Studio</span>
                   </Link>

@@ -48,7 +48,7 @@ export const HomeNavbar = () => {
         {/* menu and logo */}
         <div className='flex items-center shrink-0 flex-grow basis-0 gap-x-3 min-w-20'>
           <SidebarTrigger className='rounded-full size-8 cursor-pointer' />
-          <Link href='/' className='flex items-center gap-2'>
+          <Link prefetch href='/' className='flex items-center gap-2'>
             <LogoSvg />
           </Link>
         </div>

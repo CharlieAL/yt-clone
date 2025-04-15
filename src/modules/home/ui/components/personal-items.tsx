@@ -56,7 +56,7 @@ export const PersonalItems = () => {
                   }
                 }}
               >
-                <Link href={item.href}>
+                <Link prefetch href={item.href}>
                   <item.icon />
                   <span className='text-sm'>{item.title}</span>
                 </Link>

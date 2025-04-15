@@ -16,7 +16,7 @@ export const HomeSidebar = () => {
     >
       <SidebarHeader className='pl-2.5 pt-5 pb-3 md:hidden'>
         <div className='flex items-center shrink-0 flex-grow basis-0 gap-x-3 min-w-20'>
-          <Link href='/' className='flex items-center gap-2'>
+          <Link prefetch href='/' className='flex items-center gap-2'>
             <LogoSvg />
           </Link>
         </div>

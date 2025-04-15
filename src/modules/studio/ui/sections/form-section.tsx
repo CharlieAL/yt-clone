@@ -328,11 +328,9 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                 <div className='p-4 flex flex-col gap-6'>
                   <div className='flex justify-between items-center gap-x-2'>
                     <div className='flex flex-col gap-y-1'>
-                      <p className='text-muted-foreground text-xs'>
-                        Video Link
-                      </p>
+                      <p className='text-muted-foreground text-xs'>Video Link</p>
                       <div className='flex items-center gap-x-2'>
-                        <Link href={`/videos/${video.id}`}>
+                        <Link prefetch href={`/videos/${video.id}`}>
                           <p className='line-clamp-1 text-sm text-blue-500'>
                             {fullUrl}
                           </p>
@@ -352,9 +350,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                   </div>
                   <div className='flex justify-between items-center'>
                     <div className='flex flex-col gap-y-1'>
-                      <p className='text-muted-foreground text-xs'>
-                        Video status
-                      </p>
+                      <p className='text-muted-foreground text-xs'>Video status</p>
                       <p className='text-sm'>
                         {snakeCaseTitle(video.muxStatus || 'preparing')}
                       </p>

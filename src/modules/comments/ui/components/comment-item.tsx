@@ -33,10 +33,7 @@ interface CommentItemProps {
   variant?: 'reply' | 'comment'
 }
 
-export const CommentItem = ({
-  comment,
-  variant = 'comment'
-}: CommentItemProps) => {
+export const CommentItem = ({ comment, variant = 'comment' }: CommentItemProps) => {
   const { userId } = useAuth()
   const { openSignIn } = useClerk()
   const utils = trpc.useUtils()
@@ -86,7 +83,7 @@ export const CommentItem = ({
   return (
     <div>
       <div className='flex gap-4'>
-        <Link href={`/users/${comment.userId}`}>
+        <Link prefetch href={`/users/${comment.userId}`}>
           <UserAvatar
             size={variant === 'comment' ? 'lg' : 'sm'}
             imageUrl={comment.user.imageUrl}
@@ -96,6 +93,7 @@ export const CommentItem = ({
         <div className='flex-1 min-w-0'>
           <div className='flex items-center gap-2 mb-0.5'>
             <Link
+              prefetch
               href={`/users/${comment.userId}`}
               className='font-medium text-sm pb-0.5'
             >
@@ -119,14 +117,10 @@ export const CommentItem = ({
                 className='size-8'
               >
                 <ThumbsUpIcon
-                  className={cn(
-                    comment.viewerReaction === 'like' && 'fill-black'
-                  )}
+                  className={cn(comment.viewerReaction === 'like' && 'fill-black')}
                 />
               </Button>
-              <span className='text-xs text-muted-foreground'>
-                {comment.likes}
-              </span>
+              <span className='text-xs text-muted-foreground'>{comment.likes}</span>
               <Button
                 disabled={dislike.isPending || like.isPending}
                 variant={'ghost'}

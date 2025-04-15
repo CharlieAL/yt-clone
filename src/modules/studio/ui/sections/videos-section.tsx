@@ -114,6 +114,7 @@ const VideosSectionSuspense = () => {
               .flatMap((page) => page.data)
               .map((video) => (
                 <Link
+                  prefetch
                   key={video.id}
                   href={`/studio/videos/${video.id}`}
                   legacyBehavior
@@ -130,9 +131,7 @@ const VideosSectionSuspense = () => {
                           />
                         </div>
                         <div className='flex flex-col overflow-hidden gap-y-1'>
-                          <span className='text-sm line-clamp-1'>
-                            {video.title}
-                          </span>
+                          <span className='text-sm line-clamp-1'>{video.title}</span>
                           <span className='text-xs text-muted-foreground line-clamp-1'>
                             {video.description || 'No description'}
                           </span>
@@ -158,12 +157,8 @@ const VideosSectionSuspense = () => {
                       {format(new Date(video.createdAt), 'd MMM yyyy')}
                     </TableCell>
                     <TableCell className='text-right'>{video.views}</TableCell>
-                    <TableCell className='text-right'>
-                      {video.comments}
-                    </TableCell>
-                    <TableCell className='text-right pr-6'>
-                      {video.likes}
-                    </TableCell>
+                    <TableCell className='text-right'>{video.comments}</TableCell>
+                    <TableCell className='text-right pr-6'>{video.likes}</TableCell>
                   </TableRow>
                 </Link>
               ))}

@@ -1,10 +1,7 @@
 import Link from 'next/link'
 import { PlaylistGetManyOutput } from '../../types'
 import { THUMBNAIL_FALLBACK } from '~/constants'
-import {
-  PlaylistThumbnail,
-  PlaylistThumbnailSkeleton
-} from './playlist-thumbnail'
+import { PlaylistThumbnail, PlaylistThumbnailSkeleton } from './playlist-thumbnail'
 import { PlaylistInfo, PlaylistInfoSkeleton } from './playlist-info'
 
 interface PlaylistGridCardProps {
@@ -21,7 +18,7 @@ export const PlaylistGridCardSkeleton = () => {
 
 export const PlaylistGridCard = ({ data }: PlaylistGridCardProps) => {
   return (
-    <Link href={`/playlists/${data.id}`}>
+    <Link prefetch href={`/playlists/${data.id}`}>
       <div className='flex flex-col gap-2 w-full group'>
         <PlaylistThumbnail
           imageUrl={data.thumbnailUrl || THUMBNAIL_FALLBACK}

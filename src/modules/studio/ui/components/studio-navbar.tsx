@@ -59,7 +59,7 @@ export const StudioNavbar = () => {
         {/* menu and logo */}
         <div className='flex items-center shrink-0 flex-grow basis-0 gap-x-3 min-w-20'>
           <SidebarTrigger className='rounded-full size-8 cursor-pointer' />
-          <Link href='/studio' className='flex items-center gap-2'>
+          <Link prefetch href='/studio' className='flex items-center gap-2'>
             <LogoSvgStudio />
           </Link>
         </div>

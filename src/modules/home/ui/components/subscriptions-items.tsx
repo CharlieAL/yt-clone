@@ -62,7 +62,7 @@ export const SubscriptionsItems = () => {
                     isActive={pathname === `/users/${subscription.user.id}`}
                     tooltip={subscription.user.name}
                   >
-                    <Link href={`/users/${subscription.user.id}`}>
+                    <Link prefetch href={`/users/${subscription.user.id}`}>
                       <UserAvatar
                         imageUrl={subscription.user.imageUrl}
                         name={subscription.user.name}
@@ -80,7 +80,11 @@ export const SubscriptionsItems = () => {
                 isActive={pathname === `/subscriptions`}
                 tooltip={'View all'}
               >
-                <Link href={`/subscriptions`} className='flex items-center gap-4'>
+                <Link
+                  prefetch
+                  href={`/subscriptions`}
+                  className='flex items-center gap-4'
+                >
                   <ListIcon className='size-4' />
                   <span className=''>All subscriptions</span>
                 </Link>

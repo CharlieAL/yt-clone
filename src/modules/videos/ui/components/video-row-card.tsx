@@ -4,11 +4,7 @@ import { cva, VariantProps } from 'class-variance-authority'
 
 import { cn } from '~/lib/utils'
 import { Skeleton } from '~/components/ui/skeleton'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '~/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 
 import { UserInfo } from '~/modules/users/ui/components/user-info'
 import { UserAvatar } from '~/components/user-avatar'
@@ -96,7 +92,11 @@ export const VideoRowCard = ({
 
   return (
     <div className={videoRowCardVariants({ size })}>
-      <Link href={`/videos/${data.id}`} className={thumbnailVariants({ size })}>
+      <Link
+        prefetch
+        href={`/videos/${data.id}`}
+        className={thumbnailVariants({ size })}
+      >
         <VideoThumbnail
           imageUrl={data.thumbnailUrl}
           previewUrl={data.previewUrl}
@@ -106,7 +106,7 @@ export const VideoRowCard = ({
       </Link>
       <div className='flex-1 min-w-0'>
         <div className='flex justify-between gap-x-1'>
-          <Link href={`/videos/${data.id}`} className='flex-1 min-w-0'>
+          <Link prefetch href={`/videos/${data.id}`} className='flex-1 min-w-0'>
             <h3
               className={cn(
                 'font-medium line-clamp-2',
@@ -146,9 +146,7 @@ export const VideoRowCard = ({
                 </Tooltip>
               </>
             )}
-            {size === 'compact' && (
-              <UserInfo name={data.author.name} size={'sm'} />
-            )}
+            {size === 'compact' && <UserInfo name={data.author.name} size={'sm'} />}
             {size === 'compact' && (
               <p className='text-xs text-muted-foreground mt-1'>
                 {compactViews} views - {compactDate}

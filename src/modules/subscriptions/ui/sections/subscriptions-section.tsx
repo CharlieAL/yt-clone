@@ -61,6 +61,7 @@ const SubscriptionsSectionSuspense = () => {
           .flatMap((page) => page.data)
           .map((subscription) => (
             <Link
+              prefetch
               key={subscription.creatorId}
               href={`users/${subscription.user.id}`}
             >
