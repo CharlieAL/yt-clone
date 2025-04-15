@@ -1,8 +1,12 @@
 import { Sidebar, SidebarContent, SidebarHeader } from '~/components/ui/sidebar'
-import { MainSection, PersonalSection } from './sidebar-sections'
+
 import { Separator } from '~/components/ui/separator'
 import Link from 'next/link'
 import { LogoSvg } from './home-navbar'
+import { MainItems } from './main-items'
+import { PersonalItems } from './personal-items'
+import { SubscriptionsItems } from './subscriptions-items'
+import { SignedIn } from '@clerk/nextjs'
 
 export const HomeSidebar = () => {
   return (
@@ -19,9 +23,13 @@ export const HomeSidebar = () => {
       </SidebarHeader>
       <Separator />
       <SidebarContent className='bg-background'>
-        <MainSection />
+        <MainItems />
         <Separator />
-        <PersonalSection />
+        <PersonalItems />
+        <SignedIn>
+          <Separator />
+          <SubscriptionsItems />
+        </SignedIn>
       </SidebarContent>
     </Sidebar>
   )

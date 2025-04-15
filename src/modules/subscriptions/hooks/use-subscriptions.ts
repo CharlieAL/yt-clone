@@ -23,6 +23,7 @@ export const useSubscriptions = ({
 
       utils.videos.getManySubscribed.invalidate()
       utils.users.getOne.invalidate({ id: creatorId })
+      utils.subscriptions.getMany.invalidate()
 
       if (fromVideoId) {
         utils.videos.getOne.invalidate({
@@ -41,6 +42,7 @@ export const useSubscriptions = ({
       toast.success('Unsubscribed')
       utils.videos.getManySubscribed.invalidate()
       utils.users.getOne.invalidate({ id: creatorId })
+      utils.subscriptions.getMany.invalidate()
       if (fromVideoId) {
         utils.videos.getOne.invalidate({
           id: fromVideoId
